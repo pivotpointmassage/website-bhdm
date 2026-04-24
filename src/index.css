@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Outfit", system-ui, sans-serif;
+  --color-canvas: #0f0f0f;
+  --color-elevated: #181818;
+  --color-sage: #6d7a68;
+  --color-sage-muted: #3d4540;
+  --color-cta: #e8eedf;
+  --color-link: #6ea8ff;
+}
+
+@layer base {
+  body {
+    @apply m-0 min-h-svh antialiased;
+    font-family: var(--font-sans);
+    color: #f4f4f2;
+    background: var(--color-canvas);
+  }
+  #root {
+    @apply min-h-svh;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
