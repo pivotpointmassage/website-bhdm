@@ -33,3 +33,5 @@ npm run dev
 ```
 
 `npm run build` outputs to `dist/`. The GitHub Action runs the same build with a relative asset base for Pages.
+
+Photos in `public/images/` (from the original [MassageBook](https://www.massagebook.com/therapists/bronsonmassage) profile: main portrait + default theme background) are used for the book card, About headshot, and a subtle full-page background. You can replace those files to update them while keeping the same names.

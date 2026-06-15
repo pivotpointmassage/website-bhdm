@@ -1,10 +1,20 @@
-const MASSAGEBOOK = 'https://www.massagebook.com/therapists/bronsonmassage'
+import { useState, type ReactNode } from 'react'
+
+/** Sourced from MassageBook listing (therapist/primary + theme background) */
+const asset = (p: string) => `${import.meta.env.BASE_URL}${p.replace(/^\//, '')}`
+
+const PRACTICE_NAME = 'Pivot Point Bodywork'
+const THERAPIST_NAME = 'Bronson Davidson'
 const CALENDLY = 'https://calendly.com/bronsondavidson'
 const MAPS = 'https://www.google.com/maps/search/?api=1&query=550+Water+St+Suite+4+Building+I+Santa+Cruz+CA+95060'
-const PHONE = '(916) 342-5248'
-const PHONE_HREF = 'tel:+19163425248'
+const PHONE = '831.295.5707'
+const PHONE_HREF = 'tel:+18312955707'
+const EMAIL = 'bronsonharleymassage@gmail.com'
+const EMAIL_HREF = 'mailto:bronsonharleymassage@gmail.com'
 const ADDRESS = '550 Water St, Building I / Suite 4, Santa Cruz, CA 95060'
-import { useState, type ReactNode } from 'react'
+const IMG_MBP_PRIMARY = 'images/massagebook-primary.png'
+const IMG_MBP_HERO_BG = 'images/massagebook-hero-bg.jpg'
+const IMG_LOGO = 'images/logo.png'
 
 const HOURS: { day: string; time: string }[] = [
   { day: 'Mon', time: 'Closed' },
@@ -16,30 +26,18 @@ const HOURS: { day: string; time: string }[] = [
   { day: 'Sun', time: 'Closed' },
 ]
 
-function BookingGraphic() {
+function BookingCardImage() {
   return (
-    <div
-      className="bg-sage-muted/80 text-[#c5d0bc] flex h-full min-h-[8rem] w-full items-center justify-center p-4 md:min-w-[9rem] md:max-w-[12rem] rounded-r-xl"
-      aria-hidden
-    >
-      <svg viewBox="0 0 120 120" className="h-24 w-24" fill="none">
-        <title>Symbol</title>
-        <circle cx="60" cy="60" r="52" stroke="currentColor" strokeWidth="1.5" opacity="0.85" />
-        <line x1="4" y1="60" x2="116" y2="60" stroke="currentColor" strokeWidth="1" strokeDasharray="3 5" opacity="0.4" />
-        <path
-          d="M32 64c-2-6 2-14 8-16 3-1 5 0 7 3 1-2 3-3 5-2 3 0 4 2 3 4 3-1 5 0 4 3"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M88 64c2-6-2-14-8-16-3-1-5 0-7 3-1-2-3-3-5-2-3 0-4 2-3 4-3-1-5 0-4 3"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-        <line x1="18" y1="58" x2="102" y2="58" stroke="currentColor" strokeWidth="0.5" strokeDasharray="1 4" opacity="0.3" />
-      </svg>
+    <div className="relative h-48 w-full min-h-40 shrink-0 md:h-auto md:min-w-[10rem] md:max-w-[15rem] md:min-h-[10rem] overflow-hidden rounded-b-2xl md:rounded-b-none md:rounded-r-2xl">
+      <img
+        src={asset(IMG_MBP_PRIMARY)}
+        alt={`${THERAPIST_NAME} — ${PRACTICE_NAME}`}
+        className="h-full w-full object-cover"
+        width={620}
+        height={465}
+        loading="eager"
+        decoding="async"
+      />
     </div>
   )
 }
@@ -48,7 +46,9 @@ function BookPrimaryButton() {
   return (
     <a
       className="inline-flex items-center justify-center gap-2 rounded-lg bg-cta px-5 py-3.5 text-center text-sm font-semibold text-[#1a1f1a] shadow-sm transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-cta)]"
-      href={MASSAGEBOOK}
+      href={CALENDLY}
+      target="_blank"
+      rel="noreferrer"
     >
       Book a session
       <span className="opacity-70" aria-hidden>
@@ -65,7 +65,9 @@ function BookToolbar() {
     >
       <a
         className="block w-full rounded-lg bg-cta py-3.5 text-center text-sm font-semibold text-[#1a1f1a] transition hover:bg-white"
-        href={MASSAGEBOOK}
+        href={CALENDLY}
+        target="_blank"
+        rel="noreferrer"
       >
         Book a session
       </a>
@@ -87,16 +89,16 @@ function Headshot() {
     <div className="h-40 w-40 sm:h-44 sm:w-44 overflow-hidden rounded-full border-2 border-sage/40 bg-sage-muted/50 shadow-lg">
       {ok ? (
         <img
-          src="/headshot.jpg"
-          alt="Bronson Davidson"
-          className="h-full w-full object-cover"
+          src={asset(IMG_MBP_PRIMARY)}
+          alt={THERAPIST_NAME}
+          className="h-full w-full object-cover object-top"
           onError={() => setOk(false)}
         />
       ) : (
         <div
           className="grid h-full w-full place-content-center bg-gradient-to-br from-sage/30 to-elevated text-3xl font-semibold text-white/50"
           role="img"
-          aria-label="Placeholder until headshot is added: add public/headshot.jpg"
+          aria-label="Headshot"
         >
           BD
         </div>
@@ -105,75 +107,159 @@ function Headshot() {
   )
 }
 
+function HeroLogo() {
+  return (
+    <div className="relative w-[144px] h-[144px] sm:w-[224px] sm:h-[224px] lg:w-[288px] lg:h-[288px]">
+      {/* Organic blob with fade mask */}
+      <div
+        className="absolute inset-0 overflow-hidden"
+        style={{
+          borderRadius: '58% 42% 53% 47% / 52% 48% 52% 48%',
+          maskImage: 'radial-gradient(circle, black 60%, transparent 100%)',
+          WebkitMaskImage: 'radial-gradient(circle, black 60%, transparent 100%)'
+        }}
+      >
+        <img
+          src={asset(IMG_LOGO)}
+          alt={PRACTICE_NAME}
+          className="w-full h-full object-cover"
+          style={{
+            transform: 'scale(1.25)'
+          }}
+        />
+      </div>
+    </div>
+  )
+}
+
 export function App() {
   return (
-    <div className="pb-24 md:pb-0">
+    <div className="min-h-svh relative pb-24 md:pb-0 bg-canvas">
       <a
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded focus:bg-cta focus:px-3 focus:py-2 focus:text-sm focus:text-[#1a1f1a] focus:outline-none"
         href="#main"
       >
         Skip to main content
       </a>
-      <header className="border-b border-white/5 bg-elevated/50">
-        <div className="mx-auto max-w-3xl px-4 py-3 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4 text-sm text-white/50">
-          <a href={PHONE_HREF} className="w-fit text-[var(--color-link)] no-underline hover:underline">
-            {PHONE}
-          </a>
-          <p className="text-white/60 sm:text-right">{ADDRESS}</p>
+
+      {/* Hero Section */}
+      <section className="min-h-[85vh] flex items-center py-12 md:py-20">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+
+            {/* Left Column - Logo */}
+            <div className="order-1 lg:order-1 flex justify-center lg:justify-start">
+              <HeroLogo />
+            </div>
+
+            {/* Right Column - Text & Brand */}
+            <div className="order-2 lg:order-2 space-y-6 text-center lg:text-left">
+              {/* Top Labels */}
+              <div className="space-y-2">
+                <p className="text-xs font-light tracking-[0.25em] uppercase text-white/90">
+                  PIVOT POINT BODYWORK
+                </p>
+                <p className="text-sm text-white/50">
+                  {THERAPIST_NAME} | Santa Cruz, California
+                </p>
+              </div>
+
+              {/* Main Headline */}
+              <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold tracking-tight text-white" style={{ lineHeight: '1.1' }}>
+                Functional Bodywork
+                <br />
+                for Deep Recovery.
+              </h1>
+
+              {/* Sub-headline */}
+              <p className="text-xl sm:text-2xl font-medium text-white/80">
+                Neuromuscular &amp; Craniosacral Therapy.
+              </p>
+
+              {/* CTA Button */}
+              <div className="pt-4 flex flex-col items-center lg:items-start">
+                <a
+                  href={CALENDLY}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-3 px-12 py-4 rounded-full text-lg font-bold transition-all hover:scale-105"
+                  style={{
+                    backgroundColor: '#A3B18A',
+                    color: '#121212'
+                  }}
+                >
+                  Book a Session
+                  <span aria-hidden>→</span>
+                </a>
+
+                {/* Value Footer */}
+                <p className="text-sm text-white/40 pt-3">
+                  Choose a time that works for you.
+                </p>
+              </div>
+            </div>
+
+          </div>
         </div>
-      </header>
+      </section>
 
       <main id="main" className="mx-auto max-w-3xl px-4 py-10 md:py-14">
-        <h1 className="mb-3 text-3xl font-bold tracking-tight sm:text-4xl text-balance">Bronson Davidson</h1>
-        <p className="text-lg text-white/75 mb-2">Neuromuscular massage & craniosacral therapy</p>
-        <p className="text-sm text-white/50 mb-10">Santa Cruz, California</p>
 
-        <h2 className="text-xl font-semibold text-white mb-4" id="book-heading">
-          Book me here
-        </h2>
-
-        <section className="mb-14" aria-labelledby="book-heading">
-          <div className="overflow-hidden flex flex-col rounded-2xl border border-white/10 bg-elevated shadow-sm md:flex-row">
-            <div className="flex-1 p-5 sm:p-6">
-              <p className="font-medium text-lg text-white mb-3">Bronson Davidson</p>
-              <p className="text-white/80 text-[15px] leading-relaxed mb-5">
-                I&apos;m a neuromuscular massage therapist in practice in Santa Cruz. I&apos;m also training in
-                biodynamic craniosacral therapy—Calendly below is for related certification sessions
-                when those slots are available.
-              </p>
-              <div className="mb-4 flex flex-wrap items-center gap-2">
-                <a
-                  href={MASSAGEBOOK}
-                  className="inline-flex items-center gap-2 rounded-md bg-cta px-3 py-2 text-sm font-medium text-[#1a1f1a] transition hover:bg-white"
-                >
-                  <span>MassageBook</span>
-                  <span className="opacity-80" aria-hidden>
-                    — full booking &amp; address
-                  </span>
-                </a>
+        <section className="mb-14" aria-labelledby="about">
+          <div className="md:flex md:gap-10 md:items-center">
+            <div className="flex-1 min-w-0 order-1">
+              <SectionHeading id="about">About Bronson</SectionHeading>
+              <div className="mt-3 text-white/80 text-[15px] leading-relaxed">
+                <p className="m-0 mb-6">
+                  Connecting bodies to comfort and presence. As a neuromuscular therapist and craniosacral
+                  practitioner, I view bodywork as a deep well of connection. My path to this work began with my
+                  own journey through chronic pain in my twenties; bodywork was the key to finding a more
+                  comfortable, present way of living.
+                </p>
+                <p className="m-0">
+                  After graduating from the Neuromuscular Program at the National Holistic Institute, I continue
+                  to be fascinated by the way memory lives within our tissues. I am dedicated to learning your
+                  story to ensure your session is both specific and deeply useful to your recovery.
+                </p>
               </div>
-              <a
-                href={CALENDLY}
-                className="inline-flex items-center gap-2.5 text-[var(--color-link)] text-sm font-medium hover:underline"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <span
-                  className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white"
-                  aria-hidden
-                >
-                  C
-                </span>
-                calendly.com/bronsondavidson
-              </a>
             </div>
-            <BookingGraphic />
+            <div className="mt-6 md:mt-0 shrink-0 flex justify-center order-0 md:order-2">
+              <Headshot />
+            </div>
           </div>
         </section>
 
-        <div className="mb-8 hidden sm:block">
-          <BookPrimaryButton />
-        </div>
+        <section className="mb-14" aria-labelledby="session">
+          <SectionHeading id="session">What to expect</SectionHeading>
+          <div className="mt-4 max-w-2xl space-y-5 text-[15px] leading-relaxed text-white/80">
+            <p className="m-0">
+              A healing approach informed by your story. Every body holds memory. I believe that understanding
+              your unique history allows for more specific, effective healing. During our session, we maintain
+              an open line of communication to ensure the work is precisely what you need.
+            </p>
+
+            <h3 className="mt-6 mb-3 text-base font-bold text-white m-0">The Journey to Recovery:</h3>
+
+            <div>
+              <h4 className="mb-2 text-[15px] font-semibold text-white m-0">Activation</h4>
+              <p className="m-0">
+                We begin with breathwork and Swedish massage. This serves as a portal to activate your
+                parasympathetic nervous system, bringing your body into its most relaxed state.
+              </p>
+            </div>
+
+            <div>
+              <h4 className="mb-2 text-[15px] font-semibold text-white m-0">Deep Integration</h4>
+              <p className="m-0 mb-3">Once your body is prepared, we incorporate advanced modalities including:</p>
+              <ul className="m-0 ml-5 space-y-1.5 list-disc">
+                <li>Deep Tissue &amp; Trigger Point Therapy</li>
+                <li>Myofascial Therapy (MFT) &amp; Cross Fiber</li>
+                <li>Thai Massage</li>
+                <li>Biodynamic Craniosacral Holds</li>
+              </ul>
+            </div>
+          </div>
+        </section>
 
         <section className="mb-14" aria-labelledby="testimonial">
           <SectionHeading id="testimonial">From a client</SectionHeading>
@@ -189,81 +275,82 @@ export function App() {
           </figure>
         </section>
 
-        <section className="mb-14" aria-labelledby="session">
-          <SectionHeading id="session">What to expect</SectionHeading>
-          <ul className="mt-3 list-disc pl-5 space-y-2 text-white/80 text-[15px] leading-relaxed marker:text-sage/80">
-            <li>Clear communication so we can match the session to what you need</li>
-            <li>Swedish work and breath as a way in—supporting a relaxed, parasympathetic state</li>
-            <li>
-              Deeper work when it fits: deep tissue, trigger point, MFT, cross fiber, Thai work, and
-              craniosacral-style holds
-            </li>
-          </ul>
-        </section>
+        {/* Location & Contact - 3 Column Footer */}
+        <section className="mb-14 -mx-4 md:mx-0" aria-labelledby="practicals">
+          <div className="bg-[#121212] py-16 md:py-20 px-6 md:px-8 rounded-none md:rounded-xl">
+            <div className="flex flex-wrap gap-8 max-w-6xl mx-auto text-center md:text-left">
 
-        <section className="mb-14" aria-labelledby="practicals">
-          <SectionHeading id="practicals">Location &amp; contact</SectionHeading>
-          <div className="mt-4 space-y-4 text-[15px] leading-relaxed">
-            <div>
-              <h3 className="text-sm font-medium uppercase tracking-wide text-white/40 mb-1">Address</h3>
-              <p className="m-0 text-white/90">{ADDRESS}</p>
-              <a className="mt-2 inline-block text-[var(--color-link)] font-medium" href={MAPS} target="_blank" rel="noreferrer">
-                Open in Google Maps
-              </a>
-            </div>
-            <div>
-              <h3 className="text-sm font-medium uppercase tracking-wide text-white/40 mb-1">Phone</h3>
-              <a href={PHONE_HREF} className="text-[var(--color-link)] font-medium">
-                {PHONE}
-              </a>
-            </div>
-            <div>
-              <h3 className="text-sm font-medium uppercase tracking-wide text-white/40 mb-1">Hours</h3>
-              <p className="m-0 text-sm text-white/70 mb-2">Schedule varies. Current usual availability:</p>
-              <ul className="m-0 grid max-w-sm gap-1 sm:grid-cols-2 text-white/80">
-                {HOURS.map(({ day, time }) => (
-                  <li
-                    key={day}
-                    className="flex justify-between gap-4 border-b border-white/5 py-1.5"
-                  >
-                    <span className="text-white/50">{day}</span>
-                    <span>{time}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        <section className="mb-6" aria-labelledby="about">
-          <div className="md:flex md:gap-10 md:items-start">
-            <div className="flex-1 min-w-0 order-1">
-              <SectionHeading id="about">About</SectionHeading>
-              <div className="mt-3 space-y-3 text-white/80 text-[15px] leading-relaxed">
-                <p className="m-0">
-                  I&apos;m Bronson, a neuromuscular massage therapist and craniosacral practitioner in Santa Cruz.
-                  Massage has been a deep well of connection—to myself and to people working through pain and
-                  stress. I lived with chronic pain for much of my twenties; bodywork helped me find a more
-                  comfortable, present way of living.
+              {/* Column 1 - Location */}
+              <div className="flex-1 basis-[300px] border-r-0 md:border-r md:border-white/10 md:pr-8">
+                <h3 className="text-xs font-medium uppercase tracking-[0.15em] mb-4" style={{ color: '#A3B18A' }}>
+                  VISIT
+                </h3>
+                <p className="text-sm text-white/80 leading-relaxed mb-3">
+                  {ADDRESS}
                 </p>
-                <p className="m-0">
-                  After the Neuromuscular Program at the National Holistic Institute in San Jose, I keep seeing
-                  how much memory lives in the tissues. I love learning each person&apos;s story; it makes the
-                  work more specific and more useful.
+                <a
+                  href={MAPS}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-sm text-white/60 hover:text-white transition underline"
+                >
+                  Open in Google Maps
+                </a>
+              </div>
+
+              {/* Column 2 - Contact */}
+              <div className="flex-1 basis-[300px] border-r-0 md:border-r md:border-white/10 md:pr-8">
+                <h3 className="text-xs font-medium uppercase tracking-[0.15em] mb-4" style={{ color: '#A3B18A' }}>
+                  CONNECT
+                </h3>
+                <div className="space-y-2">
+                  <div>
+                    <a
+                      href={PHONE_HREF}
+                      className="text-sm text-white/80 hover:text-white transition block"
+                    >
+                      {PHONE}
+                    </a>
+                  </div>
+                  <div>
+                    <a
+                      href={EMAIL_HREF}
+                      className="text-sm text-white/80 hover:text-white transition block"
+                      style={{ wordBreak: 'break-all', overflowWrap: 'break-word' }}
+                    >
+                      {EMAIL}
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Column 3 - Hours */}
+              <div className="flex-1 basis-[300px]">
+                <h3 className="text-xs font-medium uppercase tracking-[0.15em] mb-4" style={{ color: '#A3B18A' }}>
+                  AVAILABILITY
+                </h3>
+                <p className="text-sm text-white/80 mb-3">
+                  Wednesday &amp; Friday:{' '}
+                  <a
+                    href={CALENDLY}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-white/90 hover:text-white underline transition"
+                  >
+                    By Appointment
+                  </a>
+                </p>
+                <p className="text-xs text-white/30">
+                  Mon, Tue, Thu, Sat, Sun: Closed
                 </p>
               </div>
-            </div>
-            <div className="mt-6 md:mt-0 shrink-0 flex justify-center order-0 md:order-2 self-start">
-              <Headshot />
+
             </div>
           </div>
         </section>
 
         <footer className="border-t border-white/10 pt-8 text-sm text-white/40">
-          <p className="m-0 mb-2">© {new Date().getFullYear()} Bronson Davidson Massage. Santa Cruz, CA.</p>
-          <a href={MASSAGEBOOK} className="text-[var(--color-link)]">
-            View full MassageBook profile
-          </a>
+          <p className="m-0">© {new Date().getFullYear()} {PRACTICE_NAME}. Santa Cruz, CA.</p>
         </footer>
       </main>
       <BookToolbar />
