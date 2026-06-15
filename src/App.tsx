@@ -13,50 +13,7 @@ const EMAIL = 'bronsonharleymassage@gmail.com'
 const EMAIL_HREF = 'mailto:bronsonharleymassage@gmail.com'
 const ADDRESS = '550 Water St, Building I / Suite 4, Santa Cruz, CA 95060'
 const IMG_MBP_PRIMARY = 'images/massagebook-primary.png'
-const IMG_MBP_HERO_BG = 'images/massagebook-hero-bg.jpg'
 const IMG_LOGO = 'images/logo.png'
-
-const HOURS: { day: string; time: string }[] = [
-  { day: 'Mon', time: 'Closed' },
-  { day: 'Tue', time: 'Closed' },
-  { day: 'Wed', time: 'By appointment' },
-  { day: 'Thu', time: 'Closed' },
-  { day: 'Fri', time: 'By appointment' },
-  { day: 'Sat', time: 'Closed' },
-  { day: 'Sun', time: 'Closed' },
-]
-
-function BookingCardImage() {
-  return (
-    <div className="relative h-48 w-full min-h-40 shrink-0 md:h-auto md:min-w-[10rem] md:max-w-[15rem] md:min-h-[10rem] overflow-hidden rounded-b-2xl md:rounded-b-none md:rounded-r-2xl">
-      <img
-        src={asset(IMG_MBP_PRIMARY)}
-        alt={`${THERAPIST_NAME} — ${PRACTICE_NAME}`}
-        className="h-full w-full object-cover"
-        width={620}
-        height={465}
-        loading="eager"
-        decoding="async"
-      />
-    </div>
-  )
-}
-
-function BookPrimaryButton() {
-  return (
-    <a
-      className="inline-flex items-center justify-center gap-2 rounded-lg bg-cta px-5 py-3.5 text-center text-sm font-semibold text-[#1a1f1a] shadow-sm transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-cta)]"
-      href={CALENDLY}
-      target="_blank"
-      rel="noreferrer"
-    >
-      Book a session
-      <span className="opacity-70" aria-hidden>
-        →
-      </span>
-    </a>
-  )
-}
 
 function BookToolbar() {
   return (
