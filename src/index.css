@@ -4,20 +4,25 @@
   --font-sans: "Inter", system-ui, sans-serif;
   --color-canvas: #121212;
   --color-elevated: #1a1a1a;
-  --color-sage: #A3B18A;
+  --color-sage: #a3b18a;
   --color-sage-muted: #3d4540;
-  --color-cta: #A3B18A;
+  --color-cta: #a3b18a;
   --color-link: #6ea8ff;
-  --color-amber: #E9C46A;
 }
 
 @layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
   body {
     @apply m-0 min-h-svh antialiased;
     font-family: var(--font-sans);
     color: #f4f4f2;
     background: var(--color-canvas);
   }
+
   #root {
     @apply min-h-svh;
   }

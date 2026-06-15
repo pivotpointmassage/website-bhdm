@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react'
+import { CalendlyButton } from './components/CalendlyButton'
 
 /** Sourced from MassageBook listing (therapist/primary + theme background) */
 const asset = (p: string) => `${import.meta.env.BASE_URL}${p.replace(/^\//, '')}`
@@ -17,17 +18,8 @@ const IMG_LOGO = 'images/logo.png'
 
 function BookToolbar() {
   return (
-    <div
-      className="md:hidden pointer-events-auto fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 bg-[#0a0a0a]/90 px-4 py-3 shadow-[0_-8px_32px_rgba(0,0,0,0.4)] backdrop-blur-md"
-    >
-      <a
-        className="block w-full rounded-lg bg-cta py-3.5 text-center text-sm font-semibold text-[#1a1f1a] transition hover:bg-white"
-        href={CALENDLY}
-        target="_blank"
-        rel="noreferrer"
-      >
-        Book a session
-      </a>
+    <div className="md:hidden pointer-events-auto fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 bg-[#0a0a0a]/90 px-4 py-3 shadow-[0_-8px_32px_rgba(0,0,0,0.4)] backdrop-blur-md">
+      <CalendlyButton fullWidth className="py-3.5 text-sm font-semibold hover:scale-100" />
     </div>
   )
 }
@@ -135,24 +127,8 @@ export function App() {
 
               {/* CTA Button */}
               <div className="pt-4 flex flex-col items-center lg:items-start">
-                <a
-                  href={CALENDLY}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-3 px-12 py-4 rounded-full text-lg font-bold transition-all hover:scale-105"
-                  style={{
-                    backgroundColor: '#A3B18A',
-                    color: '#121212'
-                  }}
-                >
-                  Book a Session
-                  <span aria-hidden>→</span>
-                </a>
-
-                {/* Value Footer */}
-                <p className="text-sm text-white/40 pt-3">
-                  Choose a time that works for you.
-                </p>
+                <CalendlyButton />
+                <p className="text-sm text-white/40 pt-3">Choose a time that works for you.</p>
               </div>
             </div>
 
@@ -233,13 +209,16 @@ export function App() {
         </section>
 
         {/* Location & Contact - 3 Column Footer */}
-        <section className="mb-14 -mx-4 md:mx-0" aria-labelledby="practicals">
+        <section className="mb-14 -mx-4 md:mx-0" aria-labelledby="practicals-heading">
           <div className="bg-[#121212] py-16 md:py-20 px-6 md:px-8 rounded-none md:rounded-xl">
+            <h2 id="practicals-heading" className="sr-only">
+              Location and contact
+            </h2>
             <div className="flex flex-wrap gap-8 max-w-6xl mx-auto text-center md:text-left">
 
               {/* Column 1 - Location */}
               <div className="flex-1 basis-[300px] border-r-0 md:border-r md:border-white/10 md:pr-8">
-                <h3 className="text-xs font-medium uppercase tracking-[0.15em] mb-4" style={{ color: '#A3B18A' }}>
+                <h3 className="text-xs font-medium uppercase tracking-[0.15em] mb-4 text-sage">
                   VISIT
                 </h3>
                 <p className="text-sm text-white/80 leading-relaxed mb-3">
@@ -257,7 +236,7 @@ export function App() {
 
               {/* Column 2 - Contact */}
               <div className="flex-1 basis-[300px] border-r-0 md:border-r md:border-white/10 md:pr-8">
-                <h3 className="text-xs font-medium uppercase tracking-[0.15em] mb-4" style={{ color: '#A3B18A' }}>
+                <h3 className="text-xs font-medium uppercase tracking-[0.15em] mb-4 text-sage">
                   CONNECT
                 </h3>
                 <div className="space-y-2">
@@ -283,7 +262,7 @@ export function App() {
 
               {/* Column 3 - Hours */}
               <div className="flex-1 basis-[300px]">
-                <h3 className="text-xs font-medium uppercase tracking-[0.15em] mb-4" style={{ color: '#A3B18A' }}>
+                <h3 className="text-xs font-medium uppercase tracking-[0.15em] mb-4 text-sage">
                   AVAILABILITY
                 </h3>
                 <p className="text-sm text-white/80 mb-3">
