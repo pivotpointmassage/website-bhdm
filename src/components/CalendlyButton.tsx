@@ -1,24 +1,18 @@
+import { CALENDLY } from '../content'
+
 type CalendlyButtonProps = {
   className?: string
-  fullWidth?: boolean
 }
 
-export function CalendlyButton({ className = '', fullWidth = false }: CalendlyButtonProps) {
+export function CalendlyButton({ className = '' }: CalendlyButtonProps) {
   return (
     <a
-      href="https://calendly.com/bronsondavidson"
+      href={CALENDLY}
       target="_blank"
-      rel="noreferrer"
-      className={[
-        'inline-flex items-center justify-center gap-3 rounded-full bg-sage px-12 py-4 text-lg font-bold text-canvas transition-all hover:scale-105 hover:bg-white',
-        fullWidth ? 'w-full' : '',
-        className,
-      ]
-        .filter(Boolean)
-        .join(' ')}
+      rel="noopener noreferrer"
+      className={['btn btn-on-dark', className].filter(Boolean).join(' ')}
     >
-      Book a Session
-      <span aria-hidden>→</span>
+      Book a Session →
     </a>
   )
 }

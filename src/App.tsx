@@ -1,295 +1,320 @@
-import { useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { CalendlyButton } from './components/CalendlyButton'
+import { StickyBookBar } from './components/StickyBookBar'
+import {
+  CONDITIONS_LEFT,
+  CONDITIONS_RIGHT,
+  EMAIL,
+  EMAIL_HREF,
+  FEATURED_TESTIMONIALS,
+  IMG_HEADSHOT,
+  IMG_LOGO,
+  INTAKE_PDF,
+  MAPS,
+  MODALITIES,
+  MORE_TESTIMONIALS,
+  PHONE,
+  PHONE_HREF,
+  PRACTICE_NAME,
+  THERAPIST_NAME,
+  type Testimonial,
+} from './content'
 
-/** Sourced from MassageBook listing (therapist/primary + theme background) */
+/** Works with both the local dev server ("/") and GitHub Pages (relative base). */
 const asset = (p: string) => `${import.meta.env.BASE_URL}${p.replace(/^\//, '')}`
-
-const PRACTICE_NAME = 'Pivot Point Bodywork'
-const THERAPIST_NAME = 'Bronson Davidson'
-const CALENDLY = 'https://calendly.com/bronsondavidson'
-const MAPS = 'https://www.google.com/maps/search/?api=1&query=550+Water+St+Suite+4+Building+I+Santa+Cruz+CA+95060'
-const PHONE = '831.295.5707'
-const PHONE_HREF = 'tel:+18312955707'
-const EMAIL = 'bronsonharleymassage@gmail.com'
-const EMAIL_HREF = 'mailto:bronsonharleymassage@gmail.com'
-const ADDRESS = '550 Water St, Building I / Suite 4, Santa Cruz, CA 95060'
-const IMG_MBP_PRIMARY = 'images/massagebook-primary.png'
-const IMG_LOGO = 'images/logo.png'
-
-function BookToolbar() {
-  return (
-    <div className="md:hidden pointer-events-auto fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 bg-[#0a0a0a]/90 px-4 py-3 shadow-[0_-8px_32px_rgba(0,0,0,0.4)] backdrop-blur-md">
-      <CalendlyButton fullWidth className="py-3.5 text-sm font-semibold hover:scale-100" />
-    </div>
-  )
-}
-
-function SectionHeading({ id, children }: { id: string; children: ReactNode }) {
-  return (
-    <h2 id={id} className="text-lg font-semibold tracking-tight text-balance text-white/95">
-      {children}
-    </h2>
-  )
-}
 
 function Headshot() {
   const [ok, setOk] = useState(true)
   return (
-    <div className="h-40 w-40 sm:h-44 sm:w-44 overflow-hidden rounded-full border-2 border-sage/40 bg-sage-muted/50 shadow-lg">
+    <div className="about-photo">
       {ok ? (
         <img
-          src={asset(IMG_MBP_PRIMARY)}
+          src={asset(IMG_HEADSHOT)}
           alt={THERAPIST_NAME}
-          className="h-full w-full object-cover object-top"
+          width={900}
+          height={900}
+          loading="lazy"
+          decoding="async"
           onError={() => setOk(false)}
         />
       ) : (
-        <div
-          className="grid h-full w-full place-content-center bg-gradient-to-br from-sage/30 to-elevated text-3xl font-semibold text-white/50"
-          role="img"
-          aria-label="Headshot"
-        >
-          BD
-        </div>
+        <span role="img" aria-label={THERAPIST_NAME}>BD</span>
       )}
     </div>
   )
 }
 
-function HeroLogo() {
+function ReviewCard({ t, compact = false }: { t: Testimonial; compact?: boolean }) {
   return (
-    <div className="relative w-[144px] h-[144px] sm:w-[224px] sm:h-[224px] lg:w-[288px] lg:h-[288px]">
-      {/* Organic blob with fade mask */}
-      <div
-        className="absolute inset-0 overflow-hidden"
-        style={{
-          borderRadius: '58% 42% 53% 47% / 52% 48% 52% 48%',
-          maskImage: 'radial-gradient(circle, black 60%, transparent 100%)',
-          WebkitMaskImage: 'radial-gradient(circle, black 60%, transparent 100%)'
-        }}
-      >
-        <img
-          src={asset(IMG_LOGO)}
-          alt={PRACTICE_NAME}
-          className="w-full h-full object-cover"
-          style={{
-            transform: 'scale(1.25)'
-          }}
-        />
-      </div>
-    </div>
+    <figure className={`testimonial-card${compact ? ' compact' : ''}`}>
+      <blockquote>
+        <p>&ldquo;{t.text}&rdquo;</p>
+      </blockquote>
+      <figcaption>— {t.name}</figcaption>
+    </figure>
   )
 }
 
 export function App() {
+  const heroCtaRef = useRef<HTMLDivElement>(null)
+  const contactRef = useRef<HTMLElement>(null)
+  const [heroCtaInView, setHeroCtaInView] = useState(true)
+  const [contactInView, setContactInView] = useState(false)
+
+  // The phone-only sticky bar shows after the hero button scrolls away, and hides near the contact section's own button.
+  useEffect(() => {
+    const heroEl = heroCtaRef.current
+    const contactEl = contactRef.current
+    if (!heroEl || !contactEl || typeof IntersectionObserver === 'undefined') return
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.target === heroEl) setHeroCtaInView(e.isIntersecting)
+        if (e.target === contactEl) setContactInView(e.isIntersecting)
+      }
+    })
+    io.observe(heroEl)
+    io.observe(contactEl)
+    return () => io.disconnect()
+  }, [])
+
   return (
-    <div className="min-h-svh relative pb-24 md:pb-0 bg-canvas">
-      <a
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded focus:bg-cta focus:px-3 focus:py-2 focus:text-sm focus:text-[#1a1f1a] focus:outline-none"
-        href="#main"
-      >
+    <>
+      <a className="skip-link" href="#main">
         Skip to main content
       </a>
 
-      {/* Hero Section */}
-      <section className="min-h-[85vh] flex items-center py-12 md:py-20">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-
-            {/* Left Column - Logo */}
-            <div className="order-1 lg:order-1 flex justify-center lg:justify-end lg:pr-6 xl:pr-10 2xl:pr-16">
-              <HeroLogo />
-            </div>
-
-            {/* Right Column - Text & Brand */}
-            <div className="order-2 lg:order-2 space-y-6 text-center lg:text-left">
-              {/* Top Labels */}
-              <div className="space-y-2">
-                <p className="text-xs font-light tracking-[0.25em] uppercase text-white/90">
-                  PIVOT POINT BODYWORK
-                </p>
-                <p className="text-sm text-white/50">
-                  {THERAPIST_NAME} | Santa Cruz, California
-                </p>
-              </div>
-
-              {/* Main Headline */}
-              <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold tracking-tight text-white" style={{ lineHeight: '1.1' }}>
-                Functional Bodywork
-                <br />
-                for Deep Recovery.
-              </h1>
-
-              {/* Sub-headline */}
-              <p className="text-xl sm:text-2xl font-medium text-white/80">
-                Neuromuscular &amp; Craniosacral Therapy.
-              </p>
-
-              {/* CTA Button */}
-              <div className="pt-4 flex flex-col items-center lg:items-start">
-                <CalendlyButton />
-                <p className="text-sm text-white/40 pt-3">Choose a time that works for you.</p>
-              </div>
-            </div>
-
+      {/* HERO */}
+      <header className="hero">
+        <div className="wrap">
+          <div className="mark">
+            <img
+              src={asset(IMG_LOGO)}
+              alt="Pivot Point Bodywork mark — two hands reaching toward each other inside a circle"
+              width={900}
+              height={900}
+              fetchPriority="high"
+              decoding="async"
+            />
           </div>
+          <h1>{PRACTICE_NAME}</h1>
+          <p className="practitioner-line">{THERAPIST_NAME}, CMT, NMT · Santa Cruz, California</p>
+          <p className="sub">Neuromuscular &amp; Craniosacral Therapy</p>
+          <div ref={heroCtaRef}>
+            <CalendlyButton />
+          </div>
+          <p className="hero-note">Wednesday &amp; Friday · by appointment</p>
         </div>
-      </section>
+      </header>
 
-      <main id="main" className="mx-auto max-w-3xl px-4 py-10 md:py-14">
-
-        <section className="mb-14" aria-labelledby="about">
-          <div className="md:flex md:gap-10 md:items-center">
-            <div className="flex-1 min-w-0 order-1">
-              <SectionHeading id="about">About Bronson</SectionHeading>
-              <div className="mt-3 text-white/80 text-[15px] leading-relaxed">
-                <p className="m-0 mb-6">
-                  Connecting bodies to comfort and presence. As a neuromuscular therapist and craniosacral
-                  practitioner, I view bodywork as a deep well of connection. My path to this work began with my
-                  own journey through chronic pain in my twenties; bodywork was the key to finding a more
-                  comfortable, present way of living.
+      <main id="main">
+        {/* ABOUT */}
+        <section className="light" aria-labelledby="about">
+          <div className="wrap">
+            <div className="about-grid">
+              <h2 className="about-title" id="about">
+                About Bronson
+              </h2>
+              <Headshot />
+              <div className="about-text">
+                <p>
+                  As a neuromuscular therapist and craniosacral practitioner, I view bodywork as a deep well of
+                  connection. My path to this work began with my own journey through chronic pain in my twenties —
+                  bodywork was the key to finding a more comfortable, present way of living.
                 </p>
-                <p className="m-0">
-                  After graduating from the Neuromuscular Program at the National Holistic Institute, I continue
-                  to be fascinated by the way memory lives within our tissues. I am dedicated to learning your
-                  story to ensure your session is both specific and deeply useful to your recovery.
+                <p>
+                  After graduating from the Neuromuscular Program at the National Holistic Institute, I continue to be
+                  fascinated by the way memory lives within our tissues. I&apos;m dedicated to learning your story to
+                  make sure your session is both personalized and useful to your recovery.
                 </p>
               </div>
             </div>
-            <div className="mt-6 md:mt-0 shrink-0 flex justify-center order-0 md:order-2">
-              <Headshot />
+            <div className="credential-box">
+              <strong>Credentials</strong>
+              California massage therapy certification, CAMTC #90329
+              <br />
+              Neuromuscular Program, National Holistic Institute, San Jose, CA, <em>Graduated with High Honors</em>
             </div>
           </div>
         </section>
 
-        <section className="mb-14" aria-labelledby="session">
-          <SectionHeading id="session">What to expect</SectionHeading>
-          <div className="mt-4 max-w-2xl space-y-5 text-[15px] leading-relaxed text-white/80">
-            <p className="m-0">
-              A healing approach informed by your story. Every body holds memory. I believe that understanding
-              your unique history allows for more specific, effective healing. During our session, we maintain
-              an open line of communication to ensure the work is precisely what you need.
-            </p>
-
-            <h3 className="mt-6 mb-3 text-base font-bold text-white m-0">The Journey to Recovery:</h3>
-
-            <div>
-              <h4 className="mb-2 text-[15px] font-semibold text-white m-0">Activation</h4>
-              <p className="m-0">
-                We begin with breathwork and Swedish massage. This serves as a portal to activate your
-                parasympathetic nervous system, bringing your body into its most relaxed state.
-              </p>
-            </div>
-
-            <div>
-              <h4 className="mb-2 text-[15px] font-semibold text-white m-0">Deep Integration</h4>
-              <p className="m-0 mb-3">Once your body is prepared, we incorporate advanced modalities including:</p>
-              <ul className="m-0 ml-5 space-y-1.5 list-disc">
-                <li>Deep Tissue &amp; Trigger Point Therapy</li>
-                <li>Myofascial Therapy (MFT) &amp; Cross Fiber</li>
-                <li>Thai Massage</li>
-                <li>Biodynamic Craniosacral Holds</li>
+        {/* CONDITIONS */}
+        <section className="light alt" aria-labelledby="conditions">
+          <div className="wrap">
+            <p className="eyebrow">Who this helps</p>
+            <h2 className="section-title" id="conditions">
+              Conditions I work with
+            </h2>
+            <div className="conditions-cols">
+              <ul className="conditions-list">
+                {CONDITIONS_LEFT.map((c) => (
+                  <li key={c}>{c}</li>
+                ))}
+              </ul>
+              <ul className="conditions-list">
+                {CONDITIONS_RIGHT.map((c) => (
+                  <li key={c}>{c}</li>
+                ))}
               </ul>
             </div>
           </div>
         </section>
 
-        <section className="mb-14" aria-labelledby="testimonial">
-          <SectionHeading id="testimonial">From a client</SectionHeading>
-          <figure className="mt-3 rounded-xl border-l-4 border-sage/70 bg-elevated/60 px-4 py-3">
-            <blockquote className="text-white/90 text-[15px] leading-relaxed">
-              <p className="m-0">
-                &ldquo;Bronson was beyond amazing. He addressed some chronic issues I have and gave me great
-                confidence that with multiple sessions they could be resolved. He has a wonderful deep yet
-                light touch that&apos;s like butter.&rdquo;
-              </p>
-            </blockquote>
-            <figcaption className="mt-2 text-sm text-white/45">— M. Hughes</figcaption>
-          </figure>
+        {/* WHAT TO EXPECT */}
+        <section className="light" aria-labelledby="expect">
+          <div className="wrap">
+            <h2 className="section-title" id="expect">
+              What to expect during your visit
+            </h2>
+            <ol className="first-visit-list">
+              <li>
+                <strong>An intake conversation.</strong>
+                First, we&apos;ll talk through your health history and what you&apos;re hoping to get out of the
+                session. Then, you&apos;ll complete consent and a short intake form.
+                <div className="intake-cta">
+                  <a href={asset(INTAKE_PDF)} download className="btn btn-on-dark">
+                    Intake Form (PDF)
+                  </a>
+                </div>
+              </li>
+              <li>
+                <strong>The session.</strong>
+                <div className="visit-sub">
+                  <p>
+                    <em>Activation:</em> We begin with breathwork and Swedish massage — a portal to activate your
+                    parasympathetic nervous system and bring your body into its most relaxed state.
+                  </p>
+                  <p>
+                    <em>Deep integration:</em> Once you are relaxed, we incorporate advanced modalities including:
+                  </p>
+                  <ul className="modalities">
+                    {MODALITIES.map((m) => (
+                      <li key={m}>{m}</li>
+                    ))}
+                  </ul>
+                  <p>
+                    <em>We check in as we go.</em> Bodywork works best with an open line of communication, you can ask
+                    to adjust pressure or skip an area at any point.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <strong>A debrief conversation.</strong>
+                We discuss how you&apos;re feeling, and whether a follow-up session would support your recovery.
+              </li>
+            </ol>
+          </div>
         </section>
 
-        {/* Location & Contact - 3 Column Footer */}
-        <section className="mb-14 -mx-4 md:mx-0" aria-labelledby="practicals-heading">
-          <div className="bg-[#121212] py-16 md:py-20 px-6 md:px-8 rounded-none md:rounded-xl">
-            <h2 id="practicals-heading" className="sr-only">
-              Location and contact
+        {/* OUR EXPERIENCES */}
+        <section className="light alt" aria-labelledby="experiences">
+          <div className="wrap">
+            <h2 className="section-title" id="experiences">
+              Our Experiences
             </h2>
-            <div className="flex flex-wrap gap-8 max-w-6xl mx-auto text-center md:text-left">
 
-              {/* Column 1 - Location */}
-              <div className="flex-1 basis-[300px] border-r-0 md:border-r md:border-white/10 md:pr-8">
-                <h3 className="text-xs font-medium uppercase tracking-[0.15em] mb-4 text-sage">
-                  VISIT
-                </h3>
-                <p className="text-sm text-white/80 leading-relaxed mb-3">
-                  {ADDRESS}
-                </p>
-                <a
-                  href={MAPS}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-sm text-white/60 hover:text-white transition underline"
-                >
-                  Open in Google Maps
-                </a>
-              </div>
+            <div className="experience">
+              <h3>
+                Massage Therapy <span className="scale-note">sliding scale</span>
+              </h3>
+              <table className="pricing-table">
+                <tbody>
+                  <tr>
+                    <td>60 minutes</td>
+                    <td>$120–$180</td>
+                  </tr>
+                  <tr>
+                    <td>90 minutes</td>
+                    <td>$150–$200</td>
+                  </tr>
+                  <tr>
+                    <td>110 minutes</td>
+                    <td>$190–$250</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
-              {/* Column 2 - Contact */}
-              <div className="flex-1 basis-[300px] border-r-0 md:border-r md:border-white/10 md:pr-8">
-                <h3 className="text-xs font-medium uppercase tracking-[0.15em] mb-4 text-sage">
-                  CONNECT
-                </h3>
-                <div className="space-y-2">
-                  <div>
-                    <a
-                      href={PHONE_HREF}
-                      className="text-sm text-white/80 hover:text-white transition block"
-                    >
-                      {PHONE}
-                    </a>
-                  </div>
-                  <div>
-                    <a
-                      href={EMAIL_HREF}
-                      className="text-sm text-white/80 hover:text-white transition block"
-                      style={{ wordBreak: 'break-all', overflowWrap: 'break-word' }}
-                    >
-                      {EMAIL}
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              {/* Column 3 - Hours */}
-              <div className="flex-1 basis-[300px]">
-                <h3 className="text-xs font-medium uppercase tracking-[0.15em] mb-4 text-sage">
-                  AVAILABILITY
-                </h3>
-                <p className="text-sm text-white/80 mb-3">
-                  Wednesday &amp; Friday:{' '}
-                  <a
-                    href={CALENDLY}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-white/90 hover:text-white underline transition"
-                  >
-                    By Appointment
-                  </a>
-                </p>
-                <p className="text-xs text-white/30">
-                  Mon, Tue, Thu, Sat, Sun: Closed
-                </p>
-              </div>
-
+            <div className="experience">
+              <h3>Biodynamic Craniosacral Therapy Practicum</h3>
+              <table className="pricing-table">
+                <tbody>
+                  <tr>
+                    <td>60 minutes or 90 minutes</td>
+                    <td>Free</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p className="pricing-caption">Advanced Certification Practice Hours</p>
             </div>
           </div>
         </section>
 
-        <footer className="border-t border-white/10 pt-8 text-sm text-white/40">
-          <p className="m-0">© {new Date().getFullYear()} {PRACTICE_NAME}. Santa Cruz, CA.</p>
-        </footer>
+        {/* TESTIMONIALS */}
+        <section className="light" aria-labelledby="reviews">
+          <div className="wrap">
+            <p className="eyebrow">From clients</p>
+            <h2 className="section-title" id="reviews">
+              What people say
+            </h2>
+            {FEATURED_TESTIMONIALS.map((t, i) => (
+              <ReviewCard key={`f-${i}`} t={t} />
+            ))}
+            <details className="more-reviews">
+              <summary>See more</summary>
+              {MORE_TESTIMONIALS.map((t, i) => (
+                <ReviewCard key={`m-${i}`} t={t} compact />
+              ))}
+            </details>
+          </div>
+        </section>
+
+        {/* CONTACT */}
+        <section className="contact" id="book" ref={contactRef} aria-labelledby="contact-heading">
+          <div className="wrap">
+            <h2 id="contact-heading" className="sr-only">
+              Location and contact
+            </h2>
+            <div className="contact-grid">
+              <div className="contact-col">
+                <h3>Visit</h3>
+                <p>
+                  550 Water St, Building I / Suite 4
+                  <br />
+                  Santa Cruz, CA 95060
+                </p>
+                <p>
+                  <a href={MAPS} target="_blank" rel="noopener noreferrer">
+                    Open in Google Maps
+                  </a>
+                </p>
+              </div>
+              <div className="contact-col">
+                <h3>Connect</h3>
+                <p>
+                  <a href={PHONE_HREF}>{PHONE}</a>
+                </p>
+                <p>
+                  <a href={EMAIL_HREF}>{EMAIL}</a>
+                </p>
+              </div>
+              <div className="contact-col">
+                <h3>Availability</h3>
+                <p>Wednesday &amp; Friday: by appointment</p>
+                <p>Mon, Tue, Thu, Sat, Sun: closed</p>
+              </div>
+            </div>
+            <div className="final-cta">
+              <CalendlyButton />
+            </div>
+          </div>
+        </section>
       </main>
-      <BookToolbar />
-    </div>
+
+      <footer className="site-footer">
+        © {new Date().getFullYear()} {PRACTICE_NAME}. Santa Cruz, CA.
+      </footer>
+
+      <StickyBookBar visible={!heroCtaInView && !contactInView} />
+    </>
   )
 }
